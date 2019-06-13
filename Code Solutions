@@ -1,0 +1,124 @@
+# Store the API key as a string - according to PEP8, constants are always named in all upper case
+API_KEY = ''
+
+# First, import the relevant modules
+import requests, json
+
+# Now, call the Quandl API and pull out a small sample of the data (only one day) to get a glimpse
+# into the JSON structure that will be returned
+
+# 1. Collect data from the Franfurt Stock Exchange, for the ticker AFX_X, for the whole year 2017 (keep in mind that the date format is YYYY-MM-DD).
+r = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?collapse=daily&order=asc&column_index=1&start_date=2017-01-01&end_date=2017-12-31&API_KEY')
+#print(r.json())
+
+
+# 2. Convert the returned JSON object into a Python dictionary.
+r_dict = r.json()
+print(type(r_dict))
+    
+# 3. Calculate what the highest and lowest opening prices were for the stock in this period.
+#print(type(r_dict['dataset']['data']))
+
+data_list = r_dict['dataset']['data']
+data_dict = {}
+for date, price in data_list:
+    if date not in data_dict:
+        data_dict[price] = date
+
+print("Top 5 Highest Opening Prices")
+print(sorted(data_dict, reverse=True)[:5])
+print("Top 5 Lowest Opening Prices")
+print(sorted(data_dict)[:5])
+
+# 4. What was the largest change in any one day (based on High and Low price)?
+
+API_KEY = ''
+import requests, json
+
+afx_r = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?collapse=daily&order=asc&start_date=2017-01-01&end_date=2017-12-31&API_KEY')
+afx_dict = afx_r.json()
+
+#'column_names': ['Date', 'Open', 'High', 'Low', 'Close', 'Change', 'Traded Volume', 'Turnover', 'Last Price of the Day', 'Daily Traded Units', 'Daily Turnover']
+
+afx_data_list = afx_dict['dataset']['data']
+afx_data_dict = {}
+
+for date, x1, x2, high, low, x3, x5, x6, x7, x8, x9 in afx_data_list:
+    if date not in afx_data_dict:
+        #afx_data_dict[date] = []
+        change = abs(high-low)
+        afx_data_dict[change] = date
+
+print("Top 5 Largest Change in any one day")
+print(sorted(afx_data_dict, reverse = True)[:5])
+
+# 5. What was the largest change between any two days (based on Closing Price)?
+
+API_KEY = ''
+import requests, json
+
+afx_r = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?collapse=daily&order=asc&start_date=2017-01-01&end_date=2017-12-31&API_KEY')
+afx_dict = afx_r.json()
+
+#'column_names': ['Date', 'Open', 'High', 'Low', 'Close', 'Change', 'Traded Volume', 'Turnover', 'Last Price of the Day', 'Daily Traded Units', 'Daily Turnover']
+
+afx_data_list = afx_dict['dataset']['data']
+afx_data_dict = {}
+change = 0
+
+for l in afx_data_list:
+    date = l[0]
+    close = l[4]
+    if date not in afx_data_dict:
+        afx_data_dict[date] = close
+
+print(afx_data_dict)
+
+# 6. What was the average daily trading volume during this year?
+
+API_KEY = ''
+import requests, json
+
+afx_r = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?collapse=daily&order=asc&start_date=2017-01-01&end_date=2017-12-31&API_KEY')
+afx_dict = afx_r.json()
+
+afx_data_list = afx_dict['dataset']['data']
+afx_data_dict = {}
+counter = 0
+total_vol = 0
+
+for date, x1, x2, x3, x4, x5, volume, x6, x7, x8, x9 in afx_data_list:
+    if date not in afx_data_dict:
+        counter += 1
+        total_vol += volume
+        afx_data_dict[volume] = date
+#print(counter)
+#print(total_vol)
+
+print("Average Daily Trading Volume")
+print(total_vol/counter)
+
+# 7. (Optional) What was the median trading volume during this year. (Note: you may need to implement your own function for calculating the median.)
+
+API_KEY = ''
+import requests, json
+
+afx_r = requests.get('https://www.quandl.com/api/v3/datasets/FSE/AFX_X.json?collapse=daily&order=asc&start_date=2017-01-01&end_date=2017-12-31&API_KEY')
+afx_dict = afx_r.json()
+
+afx_data_list = afx_dict['dataset']['data']
+afx_data_dict = {}
+counter = 0
+#total_vol = 0
+
+for l in afx_data_list:
+    date = l[0]
+    volume = l[6]
+    if date not in afx_data_dict:
+        counter += 1
+        afx_data_dict[volume] = date
+
+#print(int(counter/2))
+
+print("Median Trading Volume")
+print(sorted(afx_data_dict, reverse = True)[127])
